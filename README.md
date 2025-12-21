@@ -236,9 +236,4 @@ Backend implementation is complete and ready for frontend integration.
 
 ---
 
-If you want next, I can:
 
-* Optimize this README for resume keywords
-* Help you explain this project in interviews
-* Add deployment instructions
-* Review frontend API usage documentation
