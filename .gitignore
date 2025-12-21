@@ -1,0 +1,8 @@
+.env
+token*
+client_secret*
+*.json
+*.pkl
+__pycache__/
+.cache/
+
