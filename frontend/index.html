@@ -1,13 +1,316 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Purr-fect Playlists - Spotify to YouTube</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f9f506",
+            "background-light": "#f8f8f5",
+            "background-dark": "#23220f",
+            "text-light": "#1c1c0d",
+            "text-dark": "#fcfcf8",
+          },
+          fontFamily: {
+            "display": ["Spline Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "1rem", 
+            "lg": "2rem", 
+            "xl": "3rem", 
+            "2xl": "4rem",
+            "full": "9999px"
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.05)',
+            'glow': '0 0 20px rgba(249, 245, 6, 0.5)',
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Custom speech bubble tail */
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border: 20px solid transparent;
+      border-top-color: #ffffff;
+      border-bottom: 0;
+      margin-left: -20px;
+      margin-bottom: -20px;
+    }
+    .dark .speech-bubble::after {
+      border-top-color: #2e2d15;
+    }
+    
+    /* Hide scrollbar for clean mobile look */
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+
+    body {
+      min-height: max(884px, 100dvh);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-slideIn {
+      animation: slideIn 0.3s ease;
+    }
+  </style>
+</head>
+<body class="font-display antialiased selection:bg-primary selection:text-black">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden transition-colors duration-300">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm">
+    <div class="flex items-center gap-3">
+      <div class="flex size-10 items-center justify-center rounded-full bg-primary/20 dark:bg-primary/10 text-text-light dark:text-primary">
+        <span class="material-symbols-outlined text-[24px]">pets</span>
+      </div>
+      <h2 class="text-text-light dark:text-white text-lg font-bold tracking-tight">Purr-fect Lists</h2>
+    </div>
+    <button id="theme-btn" class="flex size-10 items-center justify-center rounded-full bg-transparent hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-light dark:text-white">
+      <span class="material-symbols-outlined text-[24px]">dark_mode</span>
+    </button>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col items-center w-full px-4 max-w-md mx-auto pb-10">
+
+    <!-- Hero Illustration -->
+    <div class="w-full mt-4 mb-6 relative group">
+      <div class="absolute inset-0 bg-primary/20 rounded-[2.5rem] rotate-3 scale-95 transition-transform group-hover:rotate-6"></div>
+      <div class="relative w-full aspect-[4/3] bg-white dark:bg-[#2e2d15] rounded-[2.5rem] overflow-hidden shadow-soft flex items-center justify-center">
+        <img alt="Cute cat looking at camera with playful expression" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9wakVbQklAvLKOSOaiG-itcjvNR1U1sbSStXpNdVKE3-C9zMhiF3KCaOVEszz9FbC2IEMeoNV6nPEDxEoklKPt3ALulUp9i0Hs2JGipkcSqdrhLjyncxYgkcEmkrDDYmLrght4zc2xt3EOafNljYfw3fS7AkVTUTKAvlER6MuXllhAp800WkbrsxwAq_7wBvaklXpetOaBv9bCeH0v9XjzqtJkYrjf60DwWAe30mAUjgIsmA-bHQ98rV0rVaL_fs9kfL8fDzIrI73"/>
+        <div class="absolute bottom-4 right-4 bg-white/80 dark:bg-black/60 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm text-primary">music_note</span>
+          <span class="text-xs font-bold text-text-light dark:text-white">Music Mode</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Headline Section -->
+    <div class="text-center mb-8">
+      <h1 class="text-text-light dark:text-white text-3xl font-bold leading-tight mb-2">
+        Spotify <span class="text-primary inline-block align-middle mx-1 material-symbols-outlined text-3xl font-black" style="font-variation-settings: 'FILL' 1;">arrow_right_alt</span> YouTube
+      </h1>
+      <p class="text-text-light/60 dark:text-white/60 text-base font-normal">
+        Turn your Spotify beats into YouTube treats!
+      </p>
+    </div>
+
+    <!-- Input & Conversion CTA -->
+    <div class="w-full space-y-4">
+      <div class="relative group/input">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-white/30 pointer-events-none transition-colors group-focus-within/input:text-primary">
+          <span class="material-symbols-outlined">link</span>
+        </div>
+        <input id="spotify-input" class="w-full h-16 pl-12 pr-4 bg-white dark:bg-[#2e2d15] border-2 border-transparent focus:border-primary rounded-2xl text-text-light dark:text-white placeholder:text-text-light/30 dark:placeholder:text-white/20 text-base font-medium shadow-sm outline-none transition-all" placeholder="Paste Spotify link here..." type="text"/>
+        <!-- Decorative paw print inside input -->
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
+          <span class="material-symbols-outlined text-2xl rotate-12">pets</span>
+        </div>
+      </div>
+      <button id="fetch-btn" class="w-full h-16 bg-primary hover:bg-[#e6e205] active:scale-[0.98] text-black text-lg font-bold rounded-2xl shadow-glow flex items-center justify-center gap-3 transition-all relative overflow-hidden group">
+        <span class="relative z-10" id="btn-text">Fetch Playlist!</span>
+        <span class="material-symbols-outlined relative z-10 group-hover:rotate-12 transition-transform">cruelty_free</span>
+        <!-- Shine effect -->
+        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-2xl"></div>
+      </button>
+    </div>
+
+    <!-- Dynamic Status / Feedback Area -->
+    <div class="w-full mt-10">
+      <!-- Status Bubble -->
+      <div class="relative mb-8">
+        <div class="speech-bubble bg-white dark:bg-[#2e2d15] p-5 rounded-2xl shadow-soft relative z-10 mx-4 text-center transform transition-all hover:-translate-y-1">
+          <p class="text-text-light dark:text-white font-medium text-sm flex items-center justify-center gap-2">
+            <span id="status-emoji" class="animate-pulse">🧶</span>
+            <span id="status-text">Ready to chase some tunes! Drop a link above.</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Character Avatar for Speech Bubble -->
+      <div class="flex justify-center -mt-4">
+        <div class="size-16 bg-background-light dark:bg-background-dark border-4 border-background-light dark:border-background-dark rounded-full overflow-hidden shadow-sm relative z-0">
+          <img class="w-full h-full object-cover" data-alt="Small cat avatar for status messages" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCix_eVzi8TevZflF8DU5JuHAXwE9Jf1EuLIc6x8ADQ2O_xnUZLaqVQn10pYA08rUUbKkjC2U3Hx_LgjC4AytwJbTIiLJCRJdaP1m_UY0Jcm1Tx5MCilFRN8TU4P86n5tjWzQ3ID4P5t-4i4VOjshqRT3HbROcik8x5VZ4qN39lGpkdyZFpg1trvDrP34WX-M0b4dmjai7XrC2P8EnFWj6j8D-pkaU-sPsHj1ASXbY_QGAAbJDHUdxuqoNYOaDGj3XZxGFxpRBL-ZfT"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Card (Hidden by default) -->
+    <div id="result-card" class="w-full mt-8 p-4 border border-dashed border-text-light/10 dark:border-white/10 rounded-2xl hidden animate-slideIn">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-text-light/40 dark:text-white/40">Recent Fetch</span>
+        <span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+      </div>
+      <div class="flex items-center gap-3 bg-white dark:bg-[#2e2d15] p-3 rounded-xl shadow-sm">
+        <div class="size-12 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-red-500">play_arrow</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 id="result-title" class="text-sm font-bold text-text-light dark:text-white truncate">Your Playlist</h4>
+          <p id="result-url" class="text-xs text-text-light/50 dark:text-white/50 truncate">Converted from Spotify</p>
+        </div>
+        <button id="copy-btn" class="size-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-text-light dark:text-white">
+          <span class="material-symbols-outlined text-lg">content_copy</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 text-center">
+    <p class="text-xs text-text-light/40 dark:text-white/30 font-medium">
+      Made with <span class="text-primary material-symbols-outlined text-[10px] align-middle">pets</span> for music lovers
+    </p>
+  </footer>
+
+</div>
+
+<!-- JavaScript - COMPLETE WORKING CODE -->
+<script>
+  const spotifyInput = document.getElementById('spotify-input');
+  const fetchBtn = document.getElementById('fetch-btn');
+  const btnText = document.getElementById('btn-text');
+  const statusText = document.getElementById('status-text');
+  const statusEmoji = document.getElementById('status-emoji');
+  const resultCard = document.getElementById('result-card');
+  const resultTitle = document.getElementById('result-title');
+  const resultUrl = document.getElementById('result-url');
+  const copyBtn = document.getElementById('copy-btn');
+  const themeBtn = document.getElementById('theme-btn');
+
+  const API_URL = 'http://127.0.0.1:8000';
+
+  console.log('✅ JavaScript loaded and ready!');
+
+  // Theme Toggle
+  themeBtn.addEventListener('click', () => {
+    console.log('Theme toggled');
+    document.documentElement.classList.toggle('dark');
+  });
+
+  // Input Focus Event
+  spotifyInput.addEventListener('focus', () => {
+    statusText.textContent = "I'm listening... waiting for that link! 😺";
+    statusEmoji.textContent = '👂';
+  });
+
+  // Input Blur Event
+  spotifyInput.addEventListener('blur', () => {
+    if (spotifyInput.value.length === 0) {
+      statusText.textContent = 'Ready to chase some tunes! Drop a link above.';
+      statusEmoji.textContent = '🧶';
+    }
+  });
+
+  // Fetch Playlist Button Click
+  fetchBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const url = spotifyInput.value.trim();
+
+    if (!url) {
+      statusText.textContent = 'Please paste a Spotify playlist link first 🐾';
+      statusEmoji.textContent = '❌';
+      return;
+    }
+
+    if (!url.includes('spotify.com/playlist')) {
+      statusText.textContent = 'That does not look like a Spotify playlist link 🤔';
+      statusEmoji.textContent = '🤔';
+      return;
+    }
+
+    fetchBtn.disabled = true;
+    btnText.textContent = 'Converting...';
+    statusText.textContent = 'Fetching your playlist from Spotify…';
+    statusEmoji.textContent = '🎧';
+    resultCard.classList.add('hidden');
+
+    try {
+      const response = await fetch(`${API_URL}/convert`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ spotify_playlist_url: url }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === 'success' && data.youtube_playlist_url) {
+        statusText.textContent = 'All set! Your YouTube playlist is ready 🐱‍👓';
+        statusEmoji.textContent = '✅';
+        resultTitle.textContent = data.playlist_name || 'Your Converted Playlist';
+        resultUrl.textContent = data.youtube_playlist_url;
+        resultUrl.href = data.youtube_playlist_url;
+        resultCard.classList.remove('hidden');
+      } else {
+        statusText.textContent = 'Could not create the YouTube playlist. Try another link? 😿';
+        statusEmoji.textContent = '❌';
+      }
+    } catch (error) {
+      console.error('Conversion error:', error);
+      statusText.textContent = error.message || 'Something went wrong while fetching your tunes 😿';
+      statusEmoji.textContent = '😿';
+    } finally {
+      fetchBtn.disabled = false;
+      btnText.textContent = 'Fetch Playlist!';
+    }
+  });
+
+  // Copy Button Click
+  copyBtn.addEventListener('click', async () => {
+    const url = resultUrl.textContent;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      statusText.textContent = 'Link copied! Share the vibes 🐾';
+      statusEmoji.textContent = '📋';
+      
+      setTimeout(() => {
+        statusText.textContent = 'Ready to convert another playlist?';
+        statusEmoji.textContent = '🧶';
+      }, 2000);
+    } catch (err) {
+      statusText.textContent = 'Couldn\'t copy automatically, select and copy manually!';
+      statusEmoji.textContent = '⚠️';
+    }
+  });
+</script>
+</body>
 </html>
